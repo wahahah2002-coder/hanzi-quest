@@ -1,5 +1,6 @@
-const WORDS = WORD_DATA.map((item) => ({
+const WORDS = WORD_DATA.map((item, index) => ({
   ...item,
+  audioId: String(index + 1).padStart(3, "0"),
   plain: normalizePinyin(item.pinyin),
 }));
 
@@ -27,17 +28,20 @@ const VOICE_STORAGE_KEY = "jiuxingji-hanzi-quest-voice-v1";
 const VOICE_OPTIONS = {
   mandarin: {
     lang: "zh-CN",
+    audioFolder: "mandarin",
     match: [/^zh-CN\b/i, /Mandarin|Putonghua|普通话|国语|國語|Ting-Ting|Meijia|China/i],
     avoid: /Cantonese|粤|粵|Hong Kong|zh-HK|yue/i,
     rate: 0.82,
   },
   cantonese: {
     lang: "zh-HK",
+    audioFolder: "cantonese",
     match: [/^zh-HK\b/i, /^yue\b/i, /Cantonese|粤|粵|Hong Kong|Sin-ji/i],
     avoid: /Mandarin|Putonghua|普通话|国语|國語|zh-CN/i,
     rate: 0.78,
   },
 };
+let currentAudio = null;
 const state = {
   mode: "listen",
   voice: getSavedVoice(),
@@ -56,15 +60,15 @@ newRound();
 els.total.textContent = WORDS.length;
 els.bankCount.textContent = `${WORDS.length} 个词`;
 els.voiceSelect.value = state.voice;
-els.speak.addEventListener("click", () => speak(state.current.word));
+els.speak.addEventListener("click", () => speak(state.current));
 els.next.addEventListener("click", newRound);
 els.reset.addEventListener("click", resetProgress);
 els.voiceSelect.addEventListener("change", () => {
   state.voice = els.voiceSelect.value;
   localStorage.setItem(VOICE_STORAGE_KEY, state.voice);
-  speak(state.current.word);
+  speak(state.current);
 });
-els.testVoice.addEventListener("click", () => speak(state.current.word));
+els.testVoice.addEventListener("click", () => speak(state.current));
 els.tabs.forEach((tab) => {
   tab.addEventListener("click", () => {
     state.mode = tab.dataset.mode;
@@ -109,7 +113,7 @@ function renderListen() {
     button.addEventListener("click", () => checkChoice(button, option.word === state.current.word));
     grid.append(button);
   });
-  window.setTimeout(() => speak(state.current.word), 280);
+  window.setTimeout(() => speak(state.current), 280);
 }
 
 function renderCards() {
@@ -126,11 +130,11 @@ function renderCards() {
     </div>
   `;
   document.querySelector('[data-card="again"]').addEventListener("click", () => {
-    speak(state.current.word);
+    speak(state.current);
     finish(false, "再听一遍，慢慢来");
   });
   document.querySelector('[data-card="known"]').addEventListener("click", () => finish(true, "记住了", true));
-  window.setTimeout(() => speak(state.current.word), 280);
+  window.setTimeout(() => speak(state.current), 280);
 }
 
 function checkChoice(button, ok) {
@@ -173,7 +177,7 @@ function renderBank() {
     card.type = "button";
     card.className = "bank-card";
     card.innerHTML = `<strong>${item.word}</strong><span>${item.pinyin}</span>`;
-    card.addEventListener("click", () => speak(item.word));
+    card.addEventListener("click", () => speak(item));
     els.bankGrid.append(card);
   });
 }
@@ -184,11 +188,39 @@ function pickWord() {
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
-function speak(text) {
-  if (!("speechSynthesis" in window)) return;
-  window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
+function speak(itemOrText) {
+  const text = typeof itemOrText === "string" ? itemOrText : itemOrText.word;
+  const audioId = typeof itemOrText === "string" ? null : itemOrText.audioId;
   const option = VOICE_OPTIONS[state.voice] || VOICE_OPTIONS.mandarin;
+  stopAudio();
+  if (audioId && option.audioFolder) {
+    const audio = new Audio(`./audio/${option.audioFolder}/${audioId}.m4a`);
+    currentAudio = audio;
+    const playPromise = audio.play();
+    if (playPromise?.catch) {
+      playPromise.catch(() => {
+        if (state.voice !== "mandarin") speakWithSystemVoice(text, option);
+      });
+    }
+    return;
+  }
+  speakWithSystemVoice(text, option);
+}
+
+function stopAudio() {
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
+    currentAudio = null;
+  }
+  if ("speechSynthesis" in window) {
+    window.speechSynthesis.cancel();
+  }
+}
+
+function speakWithSystemVoice(text, option) {
+  if (!("speechSynthesis" in window)) return;
+  const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = option.lang;
   utterance.voice = findPreferredVoice(option);
   utterance.rate = option.rate;
