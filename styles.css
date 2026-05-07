@@ -1,0 +1,364 @@
+:root {
+  --ink: #203033;
+  --muted: #647174;
+  --paper: #fffaf0;
+  --leaf: #2f7d6d;
+  --leaf-deep: #1f5f5d;
+  --coral: #ff705f;
+  --sky: #c9e7ff;
+  --sun: #ffd25f;
+  --line: rgba(32, 48, 51, 0.14);
+  --shadow: 0 18px 46px rgba(31, 95, 93, 0.18);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  font-family: "Kaiti SC", "STKaiti", "Songti SC", "PingFang SC", serif;
+  background:
+    linear-gradient(135deg, rgba(201, 231, 255, 0.95), rgba(255, 250, 240, 0.92) 36%, rgba(255, 210, 95, 0.2)),
+    radial-gradient(circle at 20% 20%, rgba(47, 125, 109, 0.16), transparent 30%),
+    #fffaf0;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.app {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 28px 0 52px;
+}
+
+.hero {
+  min-height: 250px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  align-items: end;
+  gap: 28px;
+  padding: 34px clamp(22px, 5vw, 58px);
+  border: 1px solid var(--line);
+  background:
+    linear-gradient(120deg, rgba(255, 250, 240, 0.96), rgba(201, 231, 255, 0.82)),
+    repeating-linear-gradient(90deg, rgba(47, 125, 109, 0.08) 0 1px, transparent 1px 34px);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.eyebrow {
+  margin: 0 0 10px;
+  color: var(--leaf-deep);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(54px, 10vw, 118px);
+  line-height: 0.9;
+  letter-spacing: 0;
+}
+
+.lesson {
+  margin: 18px 0 0;
+  font-size: clamp(20px, 3vw, 32px);
+  color: var(--muted);
+}
+
+.mascot {
+  width: min(240px, 100%);
+  justify-self: center;
+  filter: drop-shadow(0 20px 24px rgba(255, 112, 95, 0.25));
+}
+
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr) auto;
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.stat,
+.ghost-button,
+.mode-tab,
+.game-board,
+.word-bank {
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(12px);
+}
+
+.stat {
+  padding: 16px 18px;
+}
+
+.stat span {
+  display: block;
+  color: var(--muted);
+  font-size: 16px;
+}
+
+.stat strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 34px;
+}
+
+button {
+  border: 0;
+  cursor: pointer;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+.ghost-button,
+.primary-button,
+.sound-button,
+.choice,
+.tile,
+.mode-tab {
+  min-height: 48px;
+}
+
+.ghost-button {
+  padding: 0 24px;
+  color: var(--leaf-deep);
+  font-weight: 800;
+}
+
+.mode-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.mode-tab {
+  padding: 14px;
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.mode-tab.active {
+  color: white;
+  background: var(--leaf);
+  box-shadow: 0 12px 24px rgba(47, 125, 109, 0.22);
+}
+
+.game-board {
+  padding: clamp(18px, 4vw, 34px);
+}
+
+.round-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 14px;
+  color: var(--leaf-deep);
+  border: 1px solid rgba(47, 125, 109, 0.25);
+  background: rgba(47, 125, 109, 0.08);
+  font-weight: 800;
+}
+
+.sound-button {
+  width: 58px;
+  color: white;
+  background: var(--coral);
+  font-weight: 900;
+}
+
+.challenge {
+  min-height: 168px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 28px 0;
+}
+
+.big-word {
+  font-size: clamp(58px, 12vw, 120px);
+  line-height: 1;
+  font-weight: 900;
+}
+
+.pinyin {
+  margin-top: 14px;
+  color: var(--leaf-deep);
+  font-size: clamp(28px, 5vw, 48px);
+  font-weight: 800;
+}
+
+.hint {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 20px;
+}
+
+.answer-zone {
+  min-height: 156px;
+}
+
+.choice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.choice {
+  padding: 18px;
+  color: var(--ink);
+  border: 2px solid transparent;
+  background: white;
+  box-shadow: 0 10px 22px rgba(32, 48, 51, 0.08);
+  font-size: clamp(24px, 4vw, 42px);
+  font-weight: 900;
+}
+
+.choice.correct {
+  border-color: var(--leaf);
+  background: rgba(47, 125, 109, 0.12);
+}
+
+.choice.wrong {
+  border-color: var(--coral);
+  background: rgba(255, 112, 95, 0.12);
+}
+
+.primary-button {
+  margin-top: 18px;
+  padding: 0 24px;
+  color: white;
+  background: var(--leaf-deep);
+  font-weight: 900;
+}
+
+.card-panel {
+  width: min(560px, 100%);
+  margin: 0 auto;
+  padding: 30px;
+  background: white;
+  border: 2px solid rgba(47, 125, 109, 0.22);
+  box-shadow: 0 16px 34px rgba(32, 48, 51, 0.12);
+}
+
+.feedback {
+  min-height: 32px;
+  margin: 16px 0 0;
+  font-size: 22px;
+  font-weight: 900;
+  text-align: center;
+}
+
+.feedback.good {
+  color: var(--leaf-deep);
+}
+
+.feedback.bad {
+  color: var(--coral);
+}
+
+.word-bank {
+  margin-top: 20px;
+  padding: 22px;
+}
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 14px;
+}
+
+.section-head h2 {
+  margin: 0;
+  font-size: 30px;
+}
+
+.section-head span {
+  color: var(--muted);
+}
+
+.bank-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  max-height: 360px;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.bank-card {
+  padding: 12px;
+  background: rgba(255, 250, 240, 0.86);
+  border: 1px solid var(--line);
+}
+
+.bank-card strong {
+  display: block;
+  font-size: 22px;
+}
+
+.bank-card span {
+  display: block;
+  margin-top: 4px;
+  color: var(--leaf-deep);
+  font-size: 15px;
+}
+
+@media (max-width: 760px) {
+  .app {
+    width: min(100% - 20px, 680px);
+    padding-top: 10px;
+  }
+
+  .hero {
+    min-height: 220px;
+    grid-template-columns: 1fr;
+    padding: 24px;
+  }
+
+  .mascot {
+    width: 160px;
+    justify-self: start;
+  }
+
+  .dashboard {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .ghost-button {
+    grid-column: 1 / -1;
+  }
+
+  .mode-tabs,
+  .choice-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stat {
+    padding: 12px;
+  }
+
+  .stat strong {
+    font-size: 28px;
+  }
+
+}

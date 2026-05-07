@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="九星级字词闯关：适合小学生用手机练习听音选词和词卡复习的中文学习小游戏。" />
+    <meta name="theme-color" content="#2f7d6d" />
+    <title>九星级字词闯关</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <section class="hero" aria-labelledby="app-title">
+        <div class="hero-copy">
+          <p class="eyebrow">九星级 · 带拼音</p>
+          <h1 id="app-title">字词小虎队</h1>
+          <p class="lesson">听读音、认汉字、练拼音</p>
+        </div>
+        <svg class="mascot" viewBox="0 0 220 180" aria-hidden="true">
+          <defs>
+            <linearGradient id="fur" x1="0" x2="1" y1="0" y2="1">
+              <stop offset="0" stop-color="#ffd25f" />
+              <stop offset="1" stop-color="#ff7d5c" />
+            </linearGradient>
+          </defs>
+          <path d="M36 70 C18 45 25 20 60 35 L68 65 Z" fill="#1f2a32" />
+          <path d="M184 70 C202 45 195 20 160 35 L152 65 Z" fill="#1f2a32" />
+          <path d="M32 92 C32 40 76 16 110 18 C144 16 188 40 188 92 C188 142 153 168 110 168 C67 168 32 142 32 92 Z" fill="url(#fur)" />
+          <path d="M80 42 C92 52 128 52 140 42" stroke="#1f2a32" stroke-width="8" stroke-linecap="round" fill="none" />
+          <path d="M62 72 L88 82 M158 72 L132 82 M66 118 L90 108 M154 118 L130 108" stroke="#1f2a32" stroke-width="7" stroke-linecap="round" />
+          <circle cx="82" cy="96" r="9" fill="#1f2a32" />
+          <circle cx="138" cy="96" r="9" fill="#1f2a32" />
+          <path d="M102 112 Q110 120 118 112 Q114 136 110 136 Q106 136 102 112 Z" fill="#1f2a32" />
+          <path d="M74 138 Q110 154 146 138" stroke="#1f2a32" stroke-width="6" stroke-linecap="round" fill="none" />
+        </svg>
+      </section>
+
+      <section class="dashboard" aria-label="学习进度">
+        <div class="stat">
+          <span>得分</span>
+          <strong id="score">0</strong>
+        </div>
+        <div class="stat">
+          <span>连对</span>
+          <strong id="streak">0</strong>
+        </div>
+        <div class="stat">
+          <span>已练</span>
+          <strong><span id="seen">0</span>/<span id="total">0</span></strong>
+        </div>
+        <button class="ghost-button" id="reset-progress" type="button">重来</button>
+      </section>
+
+      <nav class="mode-tabs" aria-label="游戏模式">
+        <button class="mode-tab active" data-mode="listen" type="button">听音选词</button>
+        <button class="mode-tab" data-mode="cards" type="button">词卡复习</button>
+      </nav>
+
+      <section class="game-board" aria-live="polite">
+        <div class="round-top">
+          <span class="pill" id="round-label">第 1 题</span>
+          <button class="sound-button" id="speak-word" type="button" aria-label="朗读当前词语">读</button>
+        </div>
+
+        <div class="challenge" id="challenge"></div>
+        <div class="answer-zone" id="answer-zone"></div>
+        <p class="feedback" id="feedback"></p>
+        <button class="primary-button" id="next-round" type="button">下一题</button>
+      </section>
+
+      <section class="word-bank" aria-label="词库">
+        <div class="section-head">
+          <h2>本页词库</h2>
+          <span id="bank-count"></span>
+        </div>
+        <div class="bank-grid" id="bank-grid"></div>
+      </section>
+    </main>
+
+    <script src="./words.js"></script>
+    <script src="./script.js"></script>
+  </body>
+</html>
