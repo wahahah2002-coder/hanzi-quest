@@ -193,9 +193,8 @@ function speak(itemOrText) {
   const audioId = typeof itemOrText === "string" ? null : itemOrText.audioId;
   const option = VOICE_OPTIONS[state.voice] || VOICE_OPTIONS.mandarin;
   stopAudio();
-  const embeddedAudio = audioId ? AUDIO_DATA?.[state.voice]?.[audioId] : null;
-  if (embeddedAudio || (audioId && option.audioFolder)) {
-    const audio = new Audio(embeddedAudio || `./audio/${option.audioFolder}/${audioId}.m4a`);
+  if (audioId && option.audioFolder) {
+    const audio = new Audio(`./audio/${option.audioFolder}/${audioId}.m4a`);
     currentAudio = audio;
     const playPromise = audio.play();
     if (playPromise?.catch) {
