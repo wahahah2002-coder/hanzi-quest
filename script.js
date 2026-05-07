@@ -18,11 +18,29 @@ const els = {
   roundLabel: document.querySelector("#round-label"),
   reset: document.querySelector("#reset-progress"),
   tabs: document.querySelectorAll(".mode-tab"),
+  voiceSelect: document.querySelector("#voice-select"),
+  testVoice: document.querySelector("#test-voice"),
 };
 
 const STORAGE_KEY = "jiuxingji-hanzi-quest-progress-v1";
+const VOICE_STORAGE_KEY = "jiuxingji-hanzi-quest-voice-v1";
+const VOICE_OPTIONS = {
+  mandarin: {
+    lang: "zh-CN",
+    match: [/^zh-CN\b/i, /Mandarin|Putonghua|普通话|国语|國語|Ting-Ting|Meijia|China/i],
+    avoid: /Cantonese|粤|粵|Hong Kong|zh-HK|yue/i,
+    rate: 0.82,
+  },
+  cantonese: {
+    lang: "zh-HK",
+    match: [/^zh-HK\b/i, /^yue\b/i, /Cantonese|粤|粵|Hong Kong|Sin-ji/i],
+    avoid: /Mandarin|Putonghua|普通话|国语|國語|zh-CN/i,
+    rate: 0.78,
+  },
+};
 const state = {
   mode: "listen",
+  voice: getSavedVoice(),
   round: 1,
   score: 0,
   streak: 0,
@@ -37,9 +55,16 @@ newRound();
 
 els.total.textContent = WORDS.length;
 els.bankCount.textContent = `${WORDS.length} 个词`;
+els.voiceSelect.value = state.voice;
 els.speak.addEventListener("click", () => speak(state.current.word));
 els.next.addEventListener("click", newRound);
 els.reset.addEventListener("click", resetProgress);
+els.voiceSelect.addEventListener("change", () => {
+  state.voice = els.voiceSelect.value;
+  localStorage.setItem(VOICE_STORAGE_KEY, state.voice);
+  speak(state.current.word);
+});
+els.testVoice.addEventListener("click", () => speak(state.current.word));
 els.tabs.forEach((tab) => {
   tab.addEventListener("click", () => {
     state.mode = tab.dataset.mode;
@@ -163,12 +188,27 @@ function speak(text) {
   if (!("speechSynthesis" in window)) return;
   window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
-  const voices = window.speechSynthesis.getVoices();
-  utterance.voice = voices.find((voice) => /zh|Chinese|Mandarin/i.test(voice.lang + voice.name)) || null;
-  utterance.lang = "zh-CN";
-  utterance.rate = 0.82;
+  const option = VOICE_OPTIONS[state.voice] || VOICE_OPTIONS.mandarin;
+  utterance.lang = option.lang;
+  utterance.voice = findPreferredVoice(option);
+  utterance.rate = option.rate;
   utterance.pitch = 1.05;
   window.speechSynthesis.speak(utterance);
+}
+
+function findPreferredVoice(option) {
+  const voices = window.speechSynthesis.getVoices();
+  const voiceLabel = (voice) => `${voice.lang} ${voice.name}`;
+  return (
+    voices.find((voice) => voice.lang.toLowerCase() === option.lang.toLowerCase()) ||
+    voices.find((voice) => option.match.some((pattern) => pattern.test(voiceLabel(voice))) && !option.avoid.test(voiceLabel(voice))) ||
+    null
+  );
+}
+
+function getSavedVoice() {
+  const savedVoice = localStorage.getItem(VOICE_STORAGE_KEY);
+  return VOICE_OPTIONS[savedVoice] ? savedVoice : "mandarin";
 }
 
 function normalizePinyin(value) {

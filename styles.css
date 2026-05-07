@@ -27,7 +27,8 @@ body {
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
 }
 
@@ -88,6 +89,7 @@ h1 {
 .stat,
 .ghost-button,
 .mode-tab,
+.voice-settings,
 .game-board,
 .word-bank {
   border: 1px solid var(--line);
@@ -125,8 +127,9 @@ button:active {
 .primary-button,
 .sound-button,
 .choice,
-.tile,
-.mode-tab {
+.mode-tab,
+.voice-test,
+.voice-settings select {
   min-height: 48px;
 }
 
@@ -153,6 +156,37 @@ button:active {
   color: white;
   background: var(--leaf);
   box-shadow: 0 12px 24px rgba(47, 125, 109, 0.22);
+}
+
+.voice-settings {
+  display: grid;
+  grid-template-columns: auto minmax(160px, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding: 12px;
+}
+
+.voice-settings label {
+  color: var(--leaf-deep);
+  font-weight: 900;
+}
+
+.voice-settings select {
+  width: 100%;
+  padding: 0 14px;
+  border: 1px solid rgba(47, 125, 109, 0.26);
+  border-radius: 0;
+  background: white;
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.voice-test {
+  padding: 0 18px;
+  color: white;
+  background: var(--leaf-deep);
+  font-weight: 900;
 }
 
 .game-board {
@@ -349,6 +383,7 @@ button:active {
   }
 
   .mode-tabs,
+  .voice-settings,
   .choice-grid {
     grid-template-columns: 1fr;
   }
