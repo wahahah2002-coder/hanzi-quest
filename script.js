@@ -5,6 +5,7 @@ const WORDS = WORD_DATA.map((item, index) => ({
 }));
 
 const els = {
+  dashboard: document.querySelector("#score-panel"),
   score: document.querySelector("#score"),
   streak: document.querySelector("#streak"),
   seen: document.querySelector("#seen"),
@@ -25,6 +26,7 @@ const els = {
 
 const STORAGE_KEY = "jiuxingji-hanzi-quest-progress-v1";
 const VOICE_STORAGE_KEY = "jiuxingji-hanzi-quest-voice-v1";
+const PANEL_STORAGE_KEY = "jiuxingji-hanzi-quest-panel-position-v1";
 const VOICE_OPTIONS = {
   mandarin: {
     lang: "zh-CN",
@@ -69,6 +71,7 @@ els.voiceSelect.addEventListener("change", () => {
   speak(state.current);
 });
 els.testVoice.addEventListener("click", () => speak(state.current));
+setupFloatingPanel();
 els.tabs.forEach((tab) => {
   tab.addEventListener("click", () => {
     state.mode = tab.dataset.mode;
@@ -168,6 +171,69 @@ function renderStats() {
   els.score.textContent = state.score;
   els.streak.textContent = state.streak;
   els.seen.textContent = state.seen.size;
+}
+
+function setupFloatingPanel() {
+  restorePanelPosition();
+  window.addEventListener("resize", clampPanelToViewport);
+
+  let dragStart = null;
+  els.dashboard.addEventListener("pointerdown", (event) => {
+    if (event.target.closest("button")) return;
+    const rect = els.dashboard.getBoundingClientRect();
+    dragStart = {
+      pointerId: event.pointerId,
+      offsetX: event.clientX - rect.left,
+      offsetY: event.clientY - rect.top,
+    };
+    els.dashboard.classList.add("dragging");
+    els.dashboard.setPointerCapture(event.pointerId);
+  });
+
+  els.dashboard.addEventListener("pointermove", (event) => {
+    if (!dragStart || event.pointerId !== dragStart.pointerId) return;
+    event.preventDefault();
+    movePanel(event.clientX - dragStart.offsetX, event.clientY - dragStart.offsetY);
+  });
+
+  ["pointerup", "pointercancel"].forEach((eventName) => {
+    els.dashboard.addEventListener(eventName, (event) => {
+      if (!dragStart || event.pointerId !== dragStart.pointerId) return;
+      dragStart = null;
+      els.dashboard.classList.remove("dragging");
+      persistPanelPosition();
+    });
+  });
+}
+
+function movePanel(left, top) {
+  const rect = els.dashboard.getBoundingClientRect();
+  const margin = 8;
+  const maxLeft = window.innerWidth - rect.width - margin;
+  const maxTop = window.innerHeight - rect.height - margin;
+  els.dashboard.style.left = `${Math.min(Math.max(margin, left), maxLeft)}px`;
+  els.dashboard.style.top = `${Math.min(Math.max(margin, top), maxTop)}px`;
+  els.dashboard.style.right = "auto";
+}
+
+function clampPanelToViewport() {
+  const rect = els.dashboard.getBoundingClientRect();
+  movePanel(rect.left, rect.top);
+}
+
+function persistPanelPosition() {
+  const rect = els.dashboard.getBoundingClientRect();
+  localStorage.setItem(PANEL_STORAGE_KEY, JSON.stringify({ left: rect.left, top: rect.top }));
+}
+
+function restorePanelPosition() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(PANEL_STORAGE_KEY));
+    if (!saved) return;
+    window.setTimeout(() => movePanel(saved.left, saved.top), 0);
+  } catch {
+    localStorage.removeItem(PANEL_STORAGE_KEY);
+  }
 }
 
 function renderBank() {
